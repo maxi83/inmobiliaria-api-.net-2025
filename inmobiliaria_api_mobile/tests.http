@@ -34,7 +34,7 @@ Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0g
 ------WebKitFormBoundary7MA4YWxkTrZu0gW
 Content-Disposition: form-data; name="direccion"
 
-Calle Falsa 123
+Colon 777
 ------WebKitFormBoundary7MA4YWxkTrZu0gW
 Content-Disposition: form-data; name="uso"
 
@@ -46,7 +46,7 @@ CASA
 ------WebKitFormBoundary7MA4YWxkTrZu0gW
 Content-Disposition: form-data; name="noAmbientes"
 
-3
+2
 ------WebKitFormBoundary7MA4YWxkTrZu0gW
 Content-Disposition: form-data; name="latitud"
 
@@ -76,7 +76,7 @@ GET {{host}}/api/inmuebles
 Authorization: Bearer {{token}}
 
 ### Obtener un inmueble por id (reemplaza {id} tras crear)
-GET {{host}}/api/inmuebles/1
+GET {{host}}/api/inmuebles/2
 Authorization: Bearer {{token}}
 
 ### Actualizar inmueble (reemplaza id y ajusta campos)

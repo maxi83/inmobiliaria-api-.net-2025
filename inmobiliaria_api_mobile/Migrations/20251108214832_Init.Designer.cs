@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace inmobiliaria_api_mobile.Migrations
 {
     [DbContext(typeof(AppCntxt))]
-    [Migration("20251108193358_Init")]
+    [Migration("20251108214832_Init")]
     partial class Init
     {
         /// <inheritdoc />
