@@ -3167,24 +3167,31 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\Maxi\\.nuget\\packages\\": {}
+    "C:\\Users\\lauta\\.nuget\\packages\\": {},
+    "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\Maxi\\Documents\\inmobiliaria_api_mobile\\inmobiliaria_api_mobile\\inmobiliaria_api_mobile.csproj",
+      "projectUniqueName": "C:\\Users\\lauta\\OneDrive\\Escritorio\\develop\\clases_personalizadas\\MaximilianoGatica\\inmobiliaria_api_mobile\\inmobiliaria_api_mobile.csproj",
       "projectName": "inmobiliaria_api_mobile",
-      "projectPath": "C:\\Users\\Maxi\\Documents\\inmobiliaria_api_mobile\\inmobiliaria_api_mobile\\inmobiliaria_api_mobile.csproj",
-      "packagesPath": "C:\\Users\\Maxi\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\Maxi\\Documents\\inmobiliaria_api_mobile\\inmobiliaria_api_mobile\\obj\\",
+      "projectPath": "C:\\Users\\lauta\\OneDrive\\Escritorio\\develop\\clases_personalizadas\\MaximilianoGatica\\inmobiliaria_api_mobile\\inmobiliaria_api_mobile.csproj",
+      "packagesPath": "C:\\Users\\lauta\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\lauta\\OneDrive\\Escritorio\\develop\\clases_personalizadas\\MaximilianoGatica\\inmobiliaria_api_mobile\\obj\\",
       "projectStyle": "PackageReference",
+      "fallbackFolders": [
+        "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+      ],
       "configFilePaths": [
-        "C:\\Users\\Maxi\\AppData\\Roaming\\NuGet\\NuGet.Config"
+        "C:\\Users\\lauta\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
         "net9.0"
       ],
       "sources": {
+        "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
@@ -3251,7 +3258,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.304/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.305/PortableRuntimeIdentifierGraph.json"
       }
     }
   }

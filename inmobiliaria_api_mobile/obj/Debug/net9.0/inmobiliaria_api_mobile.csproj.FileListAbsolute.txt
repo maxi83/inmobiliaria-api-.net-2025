@@ -136,3 +136,4 @@ C:\Users\lauta\OneDrive\Escritorio\develop\clases_personalizadas\MaximilianoGati
 C:\Users\lauta\OneDrive\Escritorio\develop\clases_personalizadas\MaximilianoGatica\inmobiliaria_api_mobile\bin\Debug\net9.0\tr\Microsoft.CodeAnalysis.Workspaces.MSBuild.BuildHost.resources.dll
 C:\Users\lauta\OneDrive\Escritorio\develop\clases_personalizadas\MaximilianoGatica\inmobiliaria_api_mobile\bin\Debug\net9.0\zh-Hans\Microsoft.CodeAnalysis.Workspaces.MSBuild.BuildHost.resources.dll
 C:\Users\lauta\OneDrive\Escritorio\develop\clases_personalizadas\MaximilianoGatica\inmobiliaria_api_mobile\bin\Debug\net9.0\zh-Hant\Microsoft.CodeAnalysis.Workspaces.MSBuild.BuildHost.resources.dll
+C:\Users\lauta\OneDrive\Escritorio\develop\clases_personalizadas\MaximilianoGatica\inmobiliaria_api_mobile\bin\Debug\net9.0\inmobiliaria_api_mobile.staticwebassets.runtime.json

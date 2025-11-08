@@ -19,6 +19,7 @@ public class Inmueble
     public double Longitud { get; set; }
     public decimal Precio { get; set; }
     public Disponibilidad Disponibilidad { get; set; }
+    public string Foto { get; set; } = "";
 }
 
 public enum Uso

@@ -10,17 +10,37 @@ namespace Inmobiliaria_api_mobile.Controllers;
 [ApiController]
 [Route("api/[controller]")]
 [Authorize]
-public class InmueblesController(IInmuebleRepository repo) : ControllerBase
+public class InmueblesController(IInmuebleRepository repo, IWebHostEnvironment env) : ControllerBase
 {
     private readonly IInmuebleRepository _repo = repo;
+    private readonly IWebHostEnvironment _env = env;
 
     // Crear inmueble
     [HttpPost]
-    public async Task<IActionResult> Crear([FromBody] Inmueble inmueble)
+    public async Task<IActionResult> Crear(
+        [FromForm] Inmueble inmueble,
+        [FromForm] IFormFile imagen
+    )
     {
-        var propietarioId = int.Parse(User.FindFirstValue(JwtRegisteredClaimNames.Sub)!);
+        foreach (var claim in User.Claims)
+            Console.WriteLine($"CLAIM: {claim.Type} = {claim.Value}");
+
+        // var sub = User.FindFirstValue(JwtRegisteredClaimNames.Sub);
+        int propietarioId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
         inmueble.PropietarioId = propietarioId;
 
+        if (imagen == null || imagen.Length == 0)
+            return BadRequest("No se recibió ninguna imagen.");
+
+        string filename = Guid.NewGuid().ToString() + Path.GetExtension(imagen.FileName);
+        var ruta = Path.Combine(_env.WebRootPath, "imagenes", filename);
+
+        using (var stream = new FileStream(ruta, FileMode.Create))
+        {
+            await imagen.CopyToAsync(stream);
+        }
+
+        inmueble.Foto = filename;
         var creado = await _repo.AddAsync(inmueble);
         return Ok(creado);
     }
@@ -29,8 +49,12 @@ public class InmueblesController(IInmuebleRepository repo) : ControllerBase
     [HttpGet]
     public async Task<IActionResult> MisInmuebles()
     {
-        var propietarioId = int.Parse(User.FindFirstValue(JwtRegisteredClaimNames.Sub)!);
+        int propietarioId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
         var inmuebles = await _repo.GetByPropietarioAsync(propietarioId);
+        foreach (Inmueble inmueble in inmuebles)
+        {
+            inmueble.Foto = Path.Combine(_env.WebRootPath, "imagenes", inmueble.Foto);
+        }
         return Ok(inmuebles);
     }
 
@@ -38,11 +62,13 @@ public class InmueblesController(IInmuebleRepository repo) : ControllerBase
     [HttpGet("{id}")]
     public async Task<IActionResult> Get(int id)
     {
-        var propietarioId = int.Parse(User.FindFirstValue(JwtRegisteredClaimNames.Sub)!);
+        int propietarioId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
         var inmueble = await _repo.GetByIdAsync(id);
 
         if (inmueble == null || inmueble.PropietarioId != propietarioId)
             return NotFound();
+
+        inmueble.Foto = Path.Combine(_env.WebRootPath, "imagenes", inmueble.Foto);
 
         return Ok(inmueble);
     }
@@ -51,7 +77,7 @@ public class InmueblesController(IInmuebleRepository repo) : ControllerBase
     [HttpPut("{id}")]
     public async Task<IActionResult> Update(int id, [FromBody] Inmueble inmueble)
     {
-        var propietarioId = int.Parse(User.FindFirstValue(JwtRegisteredClaimNames.Sub)!);
+        int propietarioId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
 
         if (inmueble.PropietarioId != propietarioId || id != inmueble.Id)
             return Unauthorized("No puedes modificar inmuebles de otro propietario");
@@ -64,7 +90,7 @@ public class InmueblesController(IInmuebleRepository repo) : ControllerBase
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id)
     {
-        var propietarioId = int.Parse(User.FindFirstValue(JwtRegisteredClaimNames.Sub)!);
+        int propietarioId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
         var inmueble = await _repo.GetByIdAsync(id);
 
         if (inmueble == null || inmueble.PropietarioId != propietarioId)

@@ -40,6 +40,9 @@ builder.Services.AddAuthorization();
 
 builder.Services.AddScoped<IPropietarioRepository, PropietarioRepository>();
 builder.Services.AddScoped<IInmuebleRepository, InmuebleRepository>();
+builder.Services.AddScoped<IInquilinoRepository, InquilinoRepository>();
+builder.Services.AddScoped<IContratoRepository, ContratoRepository>();
+builder.Services.AddScoped<IPagoRepository, PagoRepository>();
 
 builder.Services.AddControllers();
 
@@ -60,5 +63,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.UseStaticFiles();
 
 app.Run();

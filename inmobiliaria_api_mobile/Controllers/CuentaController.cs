@@ -71,4 +71,29 @@ public class CuentaController(IPropietarioRepository repo, IConfiguration config
 
         return Ok(new { token = new JwtSecurityTokenHandler().WriteToken(token) });
     }
+
+    [HttpPost("change-password")]
+    public async Task<IActionResult> ChangePassword(
+        string Email,
+        string OldPassword,
+        string NewPassword
+    )
+    {
+        Propietario? propietario = await _repo.GetByEmailAsync(Email);
+        if (propietario == null)
+            return NotFound("Usuario no encontrado");
+
+        PasswordVerificationResult result = _hasher.VerifyHashedPassword(
+            propietario,
+            propietario.PasswordHash,
+            OldPassword
+        );
+        if (result == PasswordVerificationResult.Failed)
+            return Unauthorized("Contraseña actual incorrecta");
+
+        propietario.PasswordHash = _hasher.HashPassword(propietario, NewPassword);
+        await _repo.UpdateAsync(propietario);
+
+        return Ok("Contraseña actualizada");
+    }
 }

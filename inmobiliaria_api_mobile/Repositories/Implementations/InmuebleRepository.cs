@@ -18,9 +18,7 @@ public class InmuebleRepository(AppCntxt context) : IInmuebleRepository
 
     public async Task<Inmueble?> GetByIdAsync(int id)
     {
-        return await _context
-            .Inmuebles.Include(i => i.Propietario)
-            .FirstOrDefaultAsync(i => i.Id == id);
+        return await _context.Inmuebles.FirstOrDefaultAsync(i => i.Id == id);
     }
 
     public async Task<IReadOnlyList<Inmueble>> GetByPropietarioAsync(int propietarioId)
