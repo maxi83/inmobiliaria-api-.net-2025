@@ -1,0 +1,73 @@
+@host = http://localhost:5283
+
+### Registro de propietario
+POST {{host}}/api/cuenta/register
+Content-Type: application/json
+
+{
+  "dni": 12345678,
+  "nombre": "Juan",
+  "apellido": "Pérez",
+  "email": "juan@test.com",
+  "telefono": 11223344,
+  "passwordHash": "1234"
+}
+
+### Login de propietario
+# @name login
+POST {{host}}/api/cuenta/login
+Content-Type: application/json
+
+{
+  "email": "juan@test.com",
+  "passwordHash": "1234"
+}
+
+### Variable de token capturada desde el login
+@token = {{login.response.body.token}}
+
+### Crear inmueble (usa el propietario autenticado del token)
+POST {{host}}/api/inmuebles
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "direccion": "Calle Falsa 123",
+  "uso": "RESIDENCIAL",
+  "tipo": "CASA",
+  "noAmbientes": 3,
+  "latitud": -34.721,
+  "longitud": -58.254,
+  "precio": 150000,
+  "disponibilidad": "DESOCUPADO"
+}
+
+### Listar mis inmuebles
+GET {{host}}/api/inmuebles
+Authorization: Bearer {{token}}
+
+### Obtener un inmueble por id (reemplaza {id} tras crear)
+GET {{host}}/api/inmuebles/1
+Authorization: Bearer {{token}}
+
+### Actualizar inmueble (reemplaza id y ajusta campos)
+PUT {{host}}/api/inmuebles/1
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "id": 1,
+  "propietarioId": 0, // este valor será ignorado/validado por el controlador; el dueño viene del token
+  "direccion": "Calle Verdadera 456",
+  "uso": "COMERCIAL",
+  "tipo": "LOCAL",
+  "noAmbientes": 2,
+  "latitud": -34.720,
+  "longitud": -58.250,
+  "precio": 175000,
+  "disponibilidad": "SUSPENDIDO"
+}
+
+### Eliminar inmueble
+DELETE {{host}}/api/inmuebles/1
+Authorization: Bearer {{token}}
