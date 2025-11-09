@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Maxi\\Documents\\inmobiliaria_api_mobile\\inmobiliaria_api_mobile\\inmobiliaria_api_mobile.csproj": {}
+    "C:\\Users\\Maxi\\Documents\\inmobiliaria_api_mobile\\inmobiliaria_api_mobile.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Maxi\\Documents\\inmobiliaria_api_mobile\\inmobiliaria_api_mobile\\inmobiliaria_api_mobile.csproj": {
+    "C:\\Users\\Maxi\\Documents\\inmobiliaria_api_mobile\\inmobiliaria_api_mobile.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Maxi\\Documents\\inmobiliaria_api_mobile\\inmobiliaria_api_mobile\\inmobiliaria_api_mobile.csproj",
+        "projectUniqueName": "C:\\Users\\Maxi\\Documents\\inmobiliaria_api_mobile\\inmobiliaria_api_mobile.csproj",
         "projectName": "inmobiliaria_api_mobile",
-        "projectPath": "C:\\Users\\Maxi\\Documents\\inmobiliaria_api_mobile\\inmobiliaria_api_mobile\\inmobiliaria_api_mobile.csproj",
+        "projectPath": "C:\\Users\\Maxi\\Documents\\inmobiliaria_api_mobile\\inmobiliaria_api_mobile.csproj",
         "packagesPath": "C:\\Users\\Maxi\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Maxi\\Documents\\inmobiliaria_api_mobile\\inmobiliaria_api_mobile\\obj\\",
+        "outputPath": "C:\\Users\\Maxi\\Documents\\inmobiliaria_api_mobile\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\Maxi\\AppData\\Roaming\\NuGet\\NuGet.Config"

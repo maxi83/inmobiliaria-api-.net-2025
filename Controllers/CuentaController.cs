@@ -3,6 +3,7 @@ using System.Security.Claims;
 using System.Text;
 using Inmobiliaria_api_mobile.Models;
 using Inmobiliaria_api_mobile.Repositories.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
@@ -73,6 +74,7 @@ public class CuentaController(IPropietarioRepository repo, IConfiguration config
     }
 
     [HttpPost("change-password")]
+    [Authorize]
     public async Task<IActionResult> ChangePassword(
         string Email,
         string OldPassword,
@@ -95,5 +97,31 @@ public class CuentaController(IPropietarioRepository repo, IConfiguration config
         await _repo.UpdateAsync(propietario);
 
         return Ok("Contraseña actualizada");
+    }
+
+    [HttpPost]
+    [Authorize]
+    public async Task<IActionResult> VerPerfil()
+    {
+        int propietarioId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+        Propietario? propietario = await _repo.GetByIdAsync(propietarioId);
+        if (propietario == null){ 
+            return BadRequest("No se recibió ninguna imagen.");
+        }
+        return Ok(propietario);
+    }
+    [HttpPost]
+    [Authorize]
+    public async Task<IActionResult> EditarPerfil([FromBody] Propietario propietario)
+    {
+        int propietarioId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+        Propietario? propietarioAutenticado = await _repo.GetByIdAsync(propietarioId);
+        if (propietarioAutenticado == null || propietarioAutenticado.Id != propietario.Id)
+        {
+            return BadRequest("No se recibió ninguna imagen.");
+        }
+        propietario.PasswordHash = propietarioAutenticado.PasswordHash;
+        await _repo.UpdateAsync(propietario);
+        return Ok(propietario);
     }
 }

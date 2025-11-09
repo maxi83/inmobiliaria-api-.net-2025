@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "ugJFNNPazgg=",
+  "dgSpecHash": "po8fWdEgPc4=",
   "success": true,
-  "projectFilePath": "C:\\Users\\Maxi\\Documents\\inmobiliaria_api_mobile\\inmobiliaria_api_mobile\\inmobiliaria_api_mobile.csproj",
+  "projectFilePath": "C:\\Users\\Maxi\\Documents\\inmobiliaria_api_mobile\\inmobiliaria_api_mobile.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Maxi\\.nuget\\packages\\humanizer.core\\2.14.1\\humanizer.core.2.14.1.nupkg.sha512",
     "C:\\Users\\Maxi\\.nuget\\packages\\microsoft.aspnetcore.authentication.jwtbearer\\9.0.10\\microsoft.aspnetcore.authentication.jwtbearer.9.0.10.nupkg.sha512",

@@ -10,9 +10,11 @@ namespace Inmobiliaria_api_mobile.Controllers;
 [ApiController]
 [Route("api/[controller]")]
 [Authorize]
-public class InmueblesController(IInmuebleRepository repo, IWebHostEnvironment env) : ControllerBase
+public class InmueblesController(IInmuebleRepository repo, IWebHostEnvironment env, IContratoRepository repoContrato, IPagoRepository repoPago) : ControllerBase
 {
     private readonly IInmuebleRepository _repo = repo;
+    private readonly IContratoRepository _repoContrato = repoContrato;
+    private readonly IPagoRepository _repoPago = repoPago;
     private readonly IWebHostEnvironment _env = env;
 
     // Crear inmueble
@@ -22,9 +24,6 @@ public class InmueblesController(IInmuebleRepository repo, IWebHostEnvironment e
         [FromForm] IFormFile imagen
     )
     {
-        foreach (var claim in User.Claims)
-            Console.WriteLine($"CLAIM: {claim.Type} = {claim.Value}");
-
         // var sub = User.FindFirstValue(JwtRegisteredClaimNames.Sub);
         int propietarioId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
         inmueble.PropietarioId = propietarioId;
@@ -98,5 +97,31 @@ public class InmueblesController(IInmuebleRepository repo, IWebHostEnvironment e
 
         await _repo.DeleteAsync(id);
         return Ok("Inmueble eliminado");
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> CambiarDisponibilidad([FromBody] int Id, Disponibilidad disponibilidad)
+    {
+        int propietarioId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+        Inmueble? inmueble = await _repo.GetByIdAsync(Id);
+
+        if (inmueble?.PropietarioId != propietarioId || Id != inmueble?.Id)
+            return Unauthorized("No puedes modificar inmuebles de otro propietario");
+        inmueble.Disponibilidad = disponibilidad;
+        await _repo.UpdateAsync(inmueble);
+        return Ok(inmueble);
+    }
+    [HttpPost]
+    public async Task<IActionResult> ContratosPorInmuebleYPagos([FromBody] int InmuebleId)
+    {
+        int propietarioId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+        List<(Contrato, IReadOnlyList<Pago>)> contrataciones = [];
+        IReadOnlyList<Contrato> Contratos = await _repoContrato.GetByInmuebleAsync(InmuebleId);
+        foreach (Contrato contrato in Contratos)
+        {
+            IReadOnlyList<Pago> Pagos = await _repoPago.GetByContratoIdAsync(contrato.Id);
+            contrataciones.Add((contrato, Pagos));
+        }
+        return Ok(contrataciones);
     }
 }
