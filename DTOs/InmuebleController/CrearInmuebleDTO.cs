@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Http;
 using Inmobiliaria_api_mobile.Models;
+using inmobiliaria_api_mobile.Enums;
 namespace inmobiliaria_api_mobile.DTOs;
 
 public class CrearInmuebleDTO

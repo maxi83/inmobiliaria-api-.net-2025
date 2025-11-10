@@ -1,3 +1,4 @@
+using inmobiliaria_api_mobile.Enums;
 namespace inmobiliaria_api_mobile.DTOs;
 
 public class EditarInmuebleDTO {
