@@ -32,6 +32,7 @@ public class InmueblesController(
             return BadRequest("No se recibió ninguna imagen.");
 
         string filename = Guid.NewGuid() + Path.GetExtension(dto.Imagen.FileName);
+        dto.filename = filename;
         string ruta = Path.Combine(_env.WebRootPath, "imagenes", filename);
 
         using (var stream = new FileStream(ruta, FileMode.Create))
@@ -39,11 +40,7 @@ public class InmueblesController(
             await dto.Imagen.CopyToAsync(stream);
         }
 
-        Inmueble inmueble = new();
-        inmueble.Precio = dto.Precio;
-        inmueble.Direccion = dto.Direccion;
-        inmueble.Foto = filename;
-        inmueble.PropietarioId = propietarioId;
+        Inmueble inmueble = new(dto);
 
         var creado = await _repo.AddAsync(inmueble);
         return Ok(creado);

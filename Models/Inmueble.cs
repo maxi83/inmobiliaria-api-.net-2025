@@ -1,3 +1,4 @@
+using inmobiliaria_api_mobile.DTOs;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -5,6 +6,20 @@ namespace Inmobiliaria_api_mobile.Models;
 
 public class Inmueble
 {
+    public Inmueble() { }
+    public Inmueble(CrearInmuebleDTO dto)
+    {
+        Direccion = dto.Direccion;
+        Uso = (Uso)dto.Uso;
+        Tipo = (Tipo)dto.Tipo;
+        NoAmbientes = dto.NoAmbientes;
+        Latitud = dto.Latitud;
+        Longitud = dto.Longitud;
+        Precio = dto.Precio;
+        Disponibilidad = (Disponibilidad)dto.Disponibilidad;
+        Foto = dto.filename!;
+    }
+
     [Key]
     public int Id { get; set; }
 
