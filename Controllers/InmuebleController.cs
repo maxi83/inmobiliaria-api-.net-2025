@@ -18,7 +18,7 @@ public class InmueblesController(IInmuebleRepository repo, IWebHostEnvironment e
     private readonly IWebHostEnvironment _env = env;
 
     // Crear inmueble
-    [HttpPost]
+    [HttpPost("crear")]
     public async Task<IActionResult> Crear(
         [FromForm] Inmueble inmueble,
         [FromForm] IFormFile imagen
@@ -45,7 +45,7 @@ public class InmueblesController(IInmuebleRepository repo, IWebHostEnvironment e
     }
 
     // Listar inmuebles del propietario autenticado
-    [HttpGet]
+    [HttpGet("lista")]
     public async Task<IActionResult> MisInmuebles()
     {
         int propietarioId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
@@ -99,19 +99,19 @@ public class InmueblesController(IInmuebleRepository repo, IWebHostEnvironment e
         return Ok("Inmueble eliminado");
     }
 
-    [HttpPost]
-    public async Task<IActionResult> CambiarDisponibilidad([FromBody] int Id, Disponibilidad disponibilidad)
+    [HttpPost("cambiar-disponibilidad")]
+    public async Task<IActionResult> CambiarDisponibilidad([FromBody] int inmuebleId, Disponibilidad disponibilidad)
     {
         int propietarioId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
-        Inmueble? inmueble = await _repo.GetByIdAsync(Id);
+        Inmueble? inmueble = await _repo.GetByIdAsync(inmuebleId);
 
-        if (inmueble?.PropietarioId != propietarioId || Id != inmueble?.Id)
+        if (inmueble?.PropietarioId != propietarioId || inmuebleId != inmueble?.Id)
             return Unauthorized("No puedes modificar inmuebles de otro propietario");
         inmueble.Disponibilidad = disponibilidad;
         await _repo.UpdateAsync(inmueble);
         return Ok(inmueble);
     }
-    [HttpPost]
+    [HttpPost("contratos-y-pagos")]
     public async Task<IActionResult> ContratosPorInmuebleYPagos([FromBody] int InmuebleId)
     {
         int propietarioId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);

@@ -76,12 +76,12 @@ public class CuentaController(IPropietarioRepository repo, IConfiguration config
     [HttpPost("change-password")]
     [Authorize]
     public async Task<IActionResult> ChangePassword(
-        string Email,
         string OldPassword,
         string NewPassword
     )
     {
-        Propietario? propietario = await _repo.GetByEmailAsync(Email);
+        string? email = User.FindFirstValue(JwtRegisteredClaimNames.Email);
+        Propietario? propietario = await _repo.GetByEmailAsync(email ?? "");
         if (propietario == null)
             return NotFound("Usuario no encontrado");
 
@@ -99,28 +99,32 @@ public class CuentaController(IPropietarioRepository repo, IConfiguration config
         return Ok("Contraseña actualizada");
     }
 
-    [HttpPost]
+    [HttpGet("ver-perfil")]
     [Authorize]
     public async Task<IActionResult> VerPerfil()
     {
         int propietarioId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
         Propietario? propietario = await _repo.GetByIdAsync(propietarioId);
-        if (propietario == null){ 
-            return BadRequest("No se recibió ninguna imagen.");
+        if (propietario == null)
+        {
+            return BadRequest("No se encontró el usuario especificado.");
         }
         return Ok(propietario);
     }
-    [HttpPost]
+    [HttpPut("editar-perfil")]
     [Authorize]
-    public async Task<IActionResult> EditarPerfil([FromBody] Propietario propietario)
+    public async Task<IActionResult> EditarPerfil(int dni, string nombre, string apellido, int telefono)
     {
         int propietarioId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
-        Propietario? propietarioAutenticado = await _repo.GetByIdAsync(propietarioId);
-        if (propietarioAutenticado == null || propietarioAutenticado.Id != propietario.Id)
+        Propietario? propietario = await _repo.GetByIdAsync(propietarioId);
+        if (propietario == null)
         {
-            return BadRequest("No se recibió ninguna imagen.");
+            return BadRequest("No se encontró el propietario.");
         }
-        propietario.PasswordHash = propietarioAutenticado.PasswordHash;
+        propietario.DNI = dni;
+        propietario.Nombre = nombre;
+        propietario.Apellido = apellido;
+        propietario.Telefono = telefono;
         await _repo.UpdateAsync(propietario);
         return Ok(propietario);
     }
