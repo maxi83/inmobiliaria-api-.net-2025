@@ -1,6 +1,6 @@
-using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using Inmobiliaria_api_mobile.Models;
+using inmobiliaria_api_mobile.DTOs;
 using Inmobiliaria_api_mobile.Repositories.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -10,7 +10,12 @@ namespace Inmobiliaria_api_mobile.Controllers;
 [ApiController]
 [Route("api/[controller]")]
 [Authorize]
-public class InmueblesController(IInmuebleRepository repo, IWebHostEnvironment env, IContratoRepository repoContrato, IPagoRepository repoPago) : ControllerBase
+public class InmueblesController(
+    IInmuebleRepository repo,
+    IWebHostEnvironment env,
+    IContratoRepository repoContrato,
+    IPagoRepository repoPago
+) : ControllerBase
 {
     private readonly IInmuebleRepository _repo = repo;
     private readonly IContratoRepository _repoContrato = repoContrato;
@@ -19,45 +24,47 @@ public class InmueblesController(IInmuebleRepository repo, IWebHostEnvironment e
 
     // Crear inmueble
     [HttpPost("crear")]
-    public async Task<IActionResult> Crear(
-        [FromForm] Inmueble inmueble,
-        [FromForm] IFormFile imagen
-    )
+    public async Task<IActionResult> Crear([FromForm] CrearInmuebleDTO dto)
     {
-        // var sub = User.FindFirstValue(JwtRegisteredClaimNames.Sub);
         int propietarioId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
-        inmueble.PropietarioId = propietarioId;
 
-        if (imagen == null || imagen.Length == 0)
+        if (dto.Imagen == null || dto.Imagen.Length == 0)
             return BadRequest("No se recibió ninguna imagen.");
 
-        string filename = Guid.NewGuid().ToString() + Path.GetExtension(imagen.FileName);
-        var ruta = Path.Combine(_env.WebRootPath, "imagenes", filename);
+        string filename = Guid.NewGuid() + Path.GetExtension(dto.Imagen.FileName);
+        string ruta = Path.Combine(_env.WebRootPath, "imagenes", filename);
 
         using (var stream = new FileStream(ruta, FileMode.Create))
         {
-            await imagen.CopyToAsync(stream);
+            await dto.Imagen.CopyToAsync(stream);
         }
 
+        Inmueble inmueble = new();
+        inmueble.Precio = dto.Precio;
+        inmueble.Direccion = dto.Direccion;
         inmueble.Foto = filename;
+        inmueble.PropietarioId = propietarioId;
+
         var creado = await _repo.AddAsync(inmueble);
         return Ok(creado);
     }
 
-    // Listar inmuebles del propietario autenticado
-    [HttpGet("lista")]
+    // Listar inmuebles del propietario
+    [HttpGet("mis-inmuebles")]
     public async Task<IActionResult> MisInmuebles()
     {
         int propietarioId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
         var inmuebles = await _repo.GetByPropietarioAsync(propietarioId);
-        foreach (Inmueble inmueble in inmuebles)
+
+        foreach (var inmueble in inmuebles)
         {
             inmueble.Foto = Path.Combine(_env.WebRootPath, "imagenes", inmueble.Foto);
         }
+
         return Ok(inmuebles);
     }
 
-    // Obtener un inmueble específico
+    // Obtener inmueble específico
     [HttpGet("{id}")]
     public async Task<IActionResult> Get(int id)
     {
@@ -68,26 +75,29 @@ public class InmueblesController(IInmuebleRepository repo, IWebHostEnvironment e
             return NotFound();
 
         inmueble.Foto = Path.Combine(_env.WebRootPath, "imagenes", inmueble.Foto);
-
         return Ok(inmueble);
     }
 
     // Actualizar inmueble
-    [HttpPut("{id}")]
-    public async Task<IActionResult> Update(int id, [FromBody] Inmueble inmueble)
+    [HttpPut("editar")]
+    public async Task<IActionResult> Editar([FromBody] EditarInmuebleDTO dto)
     {
         int propietarioId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+        var inmueble = await _repo.GetByIdAsync(dto.Id);
 
-        if (inmueble.PropietarioId != propietarioId || id != inmueble.Id)
+        if (inmueble == null || inmueble.PropietarioId != propietarioId)
             return Unauthorized("No puedes modificar inmuebles de otro propietario");
+
+        inmueble.Precio = dto.Precio;
+        inmueble.Direccion = dto.Direccion;
 
         await _repo.UpdateAsync(inmueble);
         return Ok(inmueble);
     }
 
     // Eliminar inmueble
-    [HttpDelete("{id}")]
-    public async Task<IActionResult> Delete(int id)
+    [HttpDelete("eliminar/{id}")]
+    public async Task<IActionResult> Eliminar(int id)
     {
         int propietarioId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
         var inmueble = await _repo.GetByIdAsync(id);
@@ -99,29 +109,40 @@ public class InmueblesController(IInmuebleRepository repo, IWebHostEnvironment e
         return Ok("Inmueble eliminado");
     }
 
+    // Cambiar disponibilidad
     [HttpPost("cambiar-disponibilidad")]
-    public async Task<IActionResult> CambiarDisponibilidad([FromBody] int inmuebleId, Disponibilidad disponibilidad)
+    public async Task<IActionResult> CambiarDisponibilidad([FromBody] CambiarDisponibilidadDTO dto)
     {
         int propietarioId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
-        Inmueble? inmueble = await _repo.GetByIdAsync(inmuebleId);
+        var inmueble = await _repo.GetByIdAsync(dto.InmuebleId);
 
-        if (inmueble?.PropietarioId != propietarioId || inmuebleId != inmueble?.Id)
+        if (inmueble == null || inmueble.PropietarioId != propietarioId)
             return Unauthorized("No puedes modificar inmuebles de otro propietario");
-        inmueble.Disponibilidad = disponibilidad;
+
+        inmueble.Disponibilidad = dto.Disponibilidad;
         await _repo.UpdateAsync(inmueble);
         return Ok(inmueble);
     }
+
+    // Obtener contratos y pagos de un inmueble
     [HttpPost("contratos-y-pagos")]
-    public async Task<IActionResult> ContratosPorInmuebleYPagos([FromBody] int InmuebleId)
+    public async Task<IActionResult> ContratosYPagos([FromBody] int inmuebleId)
     {
         int propietarioId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
-        List<(Contrato, IReadOnlyList<Pago>)> contrataciones = [];
-        IReadOnlyList<Contrato> Contratos = await _repoContrato.GetByInmuebleAsync(InmuebleId);
-        foreach (Contrato contrato in Contratos)
+        var inmueble = await _repo.GetByIdAsync(inmuebleId);
+
+        if (inmueble == null || inmueble.PropietarioId != propietarioId)
+            return Unauthorized("No puedes ver los contratos de otro propietario");
+
+        var contratos = await _repoContrato.GetByInmuebleAsync(inmuebleId);
+        var result = new List<ContratosYPagosDTO>();
+
+        foreach (var contrato in contratos)
         {
-            IReadOnlyList<Pago> Pagos = await _repoPago.GetByContratoIdAsync(contrato.Id);
-            contrataciones.Add((contrato, Pagos));
+            var pagos = await _repoPago.GetByContratoIdAsync(contrato.Id);
+            result.Add(new ContratosYPagosDTO { Contrato = contrato, Pagos = pagos });
         }
-        return Ok(contrataciones);
+
+        return Ok(result);
     }
 }
